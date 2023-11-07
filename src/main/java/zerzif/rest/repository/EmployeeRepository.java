@@ -10,5 +10,8 @@ import java.util.List;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    List<Employee> findByDepartmentName(String name);
 
+    @Query("FROM Employee WHERE department.name = :name")
+    List<Employee> getEmployeesByDepartmentName(String name);
 }

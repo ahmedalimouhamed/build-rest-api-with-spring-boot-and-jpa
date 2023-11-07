@@ -24,6 +24,10 @@ public class Employee {
 
     private String name;
 
+    @OneToOne
+    @JoinColumn(name="department_id")
+    private Department department;
+
     public Employee(EmployeeRequest employeeRequest) {
         this.name = employeeRequest.getName();
     }

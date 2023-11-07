@@ -19,7 +19,6 @@ public class Department {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name="employee_id")
+    @OneToOne(mappedBy = "department")
     private Employee employee;
 }
