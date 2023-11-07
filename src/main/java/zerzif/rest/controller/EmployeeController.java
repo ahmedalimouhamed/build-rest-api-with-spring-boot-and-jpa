@@ -6,7 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zerzif.rest.model.Department;
 import zerzif.rest.model.Employee;
+import zerzif.rest.repository.DepartmentRepository;
+import zerzif.rest.repository.EmployeeRepository;
+import zerzif.rest.request.EmployeeRequest;
 import zerzif.rest.service.EmployeeService;
 
 import javax.validation.Valid;
@@ -15,67 +19,37 @@ import java.util.List;
 @RestController //@Controller + @ResponseBody
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    @Autowired
+    private EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+    private DepartmentRepository departmentRepository;
 
-
-    @Value("${app.name}")
-    private String appName;
-
-    @Value("${app.version}")
-    private String appVersion;
-
-    @GetMapping("/version")
-    public String getAppDetails(){
-        return appName+" "+appVersion;
-    }
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @GetMapping("/employees")
-    public ResponseEntity<List<Employee>> getEmployees(@RequestParam Integer pageNumber, @RequestParam Integer pageSize){
-        return new ResponseEntity<>(employeeService.getEmployees(pageNumber, pageSize), HttpStatus.OK);
+    public ResponseEntity<List<Employee>> getEmployees(){
+        return new ResponseEntity<>(employeeService.getEmployees(), HttpStatus.OK);
     }
 
-    @GetMapping("/employees/filterByName")
-    public ResponseEntity<List<Employee>> getEmployeesByName(@RequestParam String name){
-        return new ResponseEntity<>(employeeService.getEmployeesByName(name), HttpStatus.OK);
-    }
-
-    @GetMapping("/employees/filterByNameAndLocation")
-    public ResponseEntity<List<Employee>> getEmployeesByNameAndLocation(@RequestParam String name, @RequestParam String location){
-        return new ResponseEntity<>(employeeService.getEmployeesByNameAndLocation(name, location), HttpStatus.OK);
-    }
-
-    @GetMapping("/employees/filterByNameOrLocation")
-    public ResponseEntity<List<Employee>> getEmployeesByNameOrLocation(@RequestParam String name, @RequestParam String location){
-        return new ResponseEntity<>(employeeService.getEmployeesByNameOrLocation(name, location), HttpStatus.OK);
-    }
-
-    @GetMapping("/employees/filterByNameContaining")
-    public ResponseEntity<List<Employee>> getEmployeesByNameContaining(@RequestParam String keyword){
-        return new ResponseEntity<>(employeeService.getEmployeesByNameContaining(keyword), HttpStatus.OK);
-    }
-/*
-    @GetMapping("/employeesList")
-    public List<Employee> getEmployeesList(){
-        return employeeService.getEmployees();
-    }
-*/
     @GetMapping("/employees/{employeeId}")
     public ResponseEntity<Employee> getEmployee(@PathVariable("employeeId") final long employeeId){
         return new ResponseEntity<>(employeeService.getEmployee(employeeId), HttpStatus.OK);
     }
 
     @PostMapping("/employees")
-    public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody final Employee employee){
-        return new ResponseEntity<>(employeeService.saveEmployee(employee), HttpStatus.CREATED);
+    public ResponseEntity<Employee> saveEmployee(@RequestBody final EmployeeRequest request){
+        Department dep = new Department();
+        dep.setName(request.getDepartment());
+        departmentRepository.save(dep);
+        Employee employee = new Employee(request);
+        employee.setDepartment(dep);
+        return new ResponseEntity<>(employeeRepository.save(employee), HttpStatus.CREATED);
     }
 
     @PutMapping("/employees/{employeeId}")
-    public ResponseEntity<Employee> updateEmployee(@Valid @PathVariable("employeeId") final Long employeeId, @RequestBody final Employee employee){
+    public ResponseEntity<Employee> updateEmployee(@PathVariable("employeeId") final Long employeeId, @RequestBody final Employee employee){
         employee.setId(employeeId);
         return new ResponseEntity<>(employeeService.saveEmployee(employee), HttpStatus.OK);
     }
@@ -86,8 +60,9 @@ public class EmployeeController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/employees/deleteByName/{name}")
-    public ResponseEntity<String> deleteEmployeeByName(@PathVariable String name){
-        return new ResponseEntity<String>(employeeService.deleteEmployeeByName(name)+" No of row deleted", HttpStatus.OK);
+    @GetMapping("/employees/filter/{name}")
+    public ResponseEntity<List<Employee>> getEmployeesByDepartmentName(@PathVariable String name){
+        //return new ResponseEntity<>(employeeRepository.findByDepartmentName(name), HttpStatus.OK);
+        return new ResponseEntity<>(employeeRepository.getEMployeesByDepartmentName(name), HttpStatus.OK);
     }
 }

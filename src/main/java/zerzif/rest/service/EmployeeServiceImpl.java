@@ -45,9 +45,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> getEmployees(int pageNumber, int pageSize) {
-        Pageable pages = PageRequest.of(pageNumber, pageSize, Sort.Direction.DESC, "id");
-        return employeeRepository.findAll(pages).getContent();
+    public List<Employee> getEmployees() {
+       return employeeRepository.findAll();
     }
 
     @Override
@@ -73,32 +72,4 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee updateEmployee(long id, Employee employee) {
         return employeeRepository.save(employee);
     }
-
-    @Override
-    public List<Employee> getEmployeesByName(String name) {
-        return employeeRepository.findByName(name);
-    }
-
-    @Override
-    public List<Employee> getEmployeesByNameAndLocation(String name, String location) {
-        return employeeRepository.findByNameAndLocation(name, location);
-    }
-
-    @Override
-    public List<Employee> getEmployeesByNameContaining(String name) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
-        return employeeRepository.findByNameContaining(name, sort);
-    }
-
-    @Override
-    public List<Employee> getEmployeesByNameOrLocation(String name, String location) {
-        return employeeRepository.findByNameOrLocationQuery(name, location);
-    }
-
-    @Override
-    public Integer deleteEmployeeByName(String name) {
-        return employeeRepository.deleteEmployeeByName(name);
-    }
-
-
 }
