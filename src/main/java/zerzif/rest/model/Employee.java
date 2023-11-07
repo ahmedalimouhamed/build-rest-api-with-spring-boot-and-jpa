@@ -14,6 +14,7 @@ import java.util.Date;
 @Getter
 @ToString
 @Entity
+@NoArgsConstructor
 @Table(name="tbl_employee")
 public class Employee {
     @Id
@@ -23,19 +24,7 @@ public class Employee {
 
     private String name;
 
-    @JoinColumn(name="department_id")
-    @OneToOne
-    private Department department;
-
-    public Employee() {
-    }
-
-    public Employee(String name, Department department) {
-        this.name = name;
-        this.department = department;
-    }
-
-    public Employee(EmployeeRequest req) {
-        this.name = req.getName();
+    public Employee(EmployeeRequest employeeRequest) {
+        this.name = employeeRequest.getName();
     }
 }

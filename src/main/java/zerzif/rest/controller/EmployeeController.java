@@ -39,13 +39,16 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees")
-    public ResponseEntity<Employee> saveEmployee(@RequestBody final EmployeeRequest request){
-        Department dep = new Department();
-        dep.setName(request.getDepartment());
-        departmentRepository.save(dep);
+    public ResponseEntity<String> saveEmployee(@RequestBody final EmployeeRequest request){
         Employee employee = new Employee(request);
-        employee.setDepartment(dep);
-        return new ResponseEntity<>(employeeRepository.save(employee), HttpStatus.CREATED);
+        employee = employeeRepository.save(employee);
+        for(String s : request.getDepartment()){
+            Department d = new Department();
+            d.setName(s);
+            d.setEmployee(employee);
+            departmentRepository.save(d);
+        }
+        return new ResponseEntity<>("record saved Successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/employees/{employeeId}")
@@ -63,6 +66,7 @@ public class EmployeeController {
     @GetMapping("/employees/filter/{name}")
     public ResponseEntity<List<Employee>> getEmployeesByDepartmentName(@PathVariable String name){
         //return new ResponseEntity<>(employeeRepository.findByDepartmentName(name), HttpStatus.OK);
-        return new ResponseEntity<>(employeeRepository.getEMployeesByDepartmentName(name), HttpStatus.OK);
+        //return new ResponseEntity<>(employeeRepository.getEMployeesByDepartmentName(name), HttpStatus.OK);
+        return null;
     }
 }

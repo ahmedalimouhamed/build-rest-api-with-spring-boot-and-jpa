@@ -18,4 +18,8 @@ public class Department {
     private long id;
 
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name="employee_id")
+    private Employee employee;
 }
