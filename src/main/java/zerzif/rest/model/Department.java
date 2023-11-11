@@ -19,6 +19,10 @@ public class Department {
 
     private String name;
 
-    @OneToOne(mappedBy = "department")
+//    @OneToOne(mappedBy = "department")
+//    private Employee employee;
+
+    @ManyToOne
+    @JoinColumn(name="employee_id")
     private Employee employee;
 }

@@ -1,14 +1,8 @@
 package zerzif.rest.model;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import zerzif.rest.request.EmployeeRequest;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.util.Date;
 
 @Setter
 @Getter
@@ -16,6 +10,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table(name="tbl_employee")
+@NamedQuery(name="Employee.getAllRecords", query="FROM Employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +19,5 @@ public class Employee {
 
     private String name;
 
-    @OneToOne
-    @JoinColumn(name="department_id")
-    private Department department;
-
-    public Employee(EmployeeRequest employeeRequest) {
-        this.name = employeeRequest.getName();
-    }
+    private String location;
 }

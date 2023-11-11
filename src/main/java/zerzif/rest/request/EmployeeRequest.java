@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 public class EmployeeRequest {
     private String name;
-    private String department;
+    private String location;
 }
